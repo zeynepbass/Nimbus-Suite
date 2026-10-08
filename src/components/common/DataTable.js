@@ -10,6 +10,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,6 +28,15 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { exportToExcel } from "@/lib/excel";
+
+const SORT_LABELS = { asc: "ascending", desc: "descending" };
+
+function getColumnLabel(column) {
+  const { header } = column.columnDef;
+
+  if (typeof header === "string" && header) return header;
+  return header?.title ?? column.id;
+}
 
 export default function DataTable({
   title,
@@ -57,24 +67,34 @@ export default function DataTable({
   });
 
   const searchField = table.getColumn(searchColumn);
+  const pageCount = table.getPageCount();
+
+  const handleExport = async () => {
+    try {
+      await exportToExcel(exportRows, title);
+    } catch {
+      toast.error("Excel dosyası oluşturulamadı");
+    }
+  };
 
   return (
     <div className="w-full">
       {title && (
-        <div className="flex items-center justify-between">
-          <h1>{title}</h1>
-          <div className="flex gap-1 py-3">
+        <div className="flex flex-col gap-2 py-3 lg:flex-row lg:items-center lg:justify-between">
+          <h2 className="font-semibold">{title}</h2>
+          <div className="flex flex-wrap items-center gap-2">
             <Input
+              aria-label={searchPlaceholder}
               placeholder={searchPlaceholder}
               value={searchField?.getFilterValue() ?? ""}
               onChange={(event) => searchField?.setFilterValue(event.target.value)}
-              className="w-xs"
+              className="w-full sm:w-xs"
             />
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button variant="outline" className="ml-auto">
-                  Filtrele <ChevronDown />
+                <Button variant="outline">
+                  Sütunlar <ChevronDown />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -86,9 +106,8 @@ export default function DataTable({
                       key={column.id}
                       checked={column.getIsVisible()}
                       onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                      className="capitalize"
                     >
-                      {column.id}
+                      {getColumnLabel(column)}
                     </DropdownMenuCheckboxItem>
                   ))}
               </DropdownMenuContent>
@@ -97,7 +116,7 @@ export default function DataTable({
             {exportRows && (
               <Button
                 className="bg-[#6C120B] text-white"
-                onClick={() => exportToExcel(exportRows, title)}
+                onClick={handleExport}
               >
                 Excel İndir
               </Button>
@@ -114,7 +133,11 @@ export default function DataTable({
             {table.getHeaderGroups().map((group) => (
               <TableRow key={group.id}>
                 {group.headers.map((header) => (
-                  <TableHead key={header.id} className="text-center">
+                  <TableHead
+                    key={header.id}
+                    className="text-center"
+                    aria-sort={SORT_LABELS[header.column.getIsSorted()]}
+                  >
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -137,7 +160,10 @@ export default function DataTable({
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center text-muted-foreground"
+                >
                   Veri bulunamadı.
                 </TableCell>
               </TableRow>
@@ -146,7 +172,12 @@ export default function DataTable({
         </Table>
       </div>
 
-      <div className="flex justify-end gap-2 py-2">
+      <div className="flex items-center justify-end gap-2 py-2">
+        <span className="mr-auto text-sm text-muted-foreground">
+          {table.getFilteredRowModel().rows.length} kayıt
+          {pageCount > 1 &&
+            ` · Sayfa ${table.getState().pagination.pageIndex + 1} / ${pageCount}`}
+        </span>
         <Button
           variant="outline"
           size="sm"

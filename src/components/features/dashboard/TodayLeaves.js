@@ -10,16 +10,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-
-const isOnLeaveToday = (employee) => {
-  const today = new Date().setHours(0, 0, 0, 0);
-
-  return employee.leaveDates.some(
-    (leave) =>
-      new Date(leave.from).setHours(0, 0, 0, 0) <= today &&
-      today <= new Date(leave.to).setHours(0, 0, 0, 0)
-  );
-};
+import { isOnLeaveToday } from "@/lib/employees";
 
 export default function TodayLeaves({ employees }) {
   const router = useRouter();
@@ -28,7 +19,7 @@ export default function TodayLeaves({ employees }) {
     <AvatarStack employees={employees.filter(isOnLeaveToday)}>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button variant="outline" className="h-8 w-8 p-0">
+          <Button variant="outline" className="h-8 w-8 p-0" aria-label="İzin kısayolları">
             <MoreHorizontal />
           </Button>
         </DropdownMenuTrigger>

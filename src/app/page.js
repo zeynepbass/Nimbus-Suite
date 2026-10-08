@@ -2,15 +2,17 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, getHomePath } from "@/lib/auth";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { getHomePath } from "@/lib/auth";
 
 export default function HomePage() {
   const router = useRouter();
+  const user = useCurrentUser();
 
   useEffect(() => {
-    const user = getCurrentUser();
+    if (user === undefined) return;
     router.replace(user ? getHomePath(user) : "/login");
-  }, [router]);
+  }, [user, router]);
 
   return null;
 }

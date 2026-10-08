@@ -7,9 +7,10 @@ export default function LoginPage() {
       <div className="relative hidden md:col-span-7 md:block">
         <Image
           src="/images/85332.jpg"
-          alt="ERP Login Background"
+          alt=""
           fill
           priority
+          sizes="(min-width: 768px) 58vw, 0px"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gray-900/30" />

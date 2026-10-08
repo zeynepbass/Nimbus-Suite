@@ -15,7 +15,7 @@ export default function useList(initialItems, { removeMessage = "İptal edildi" 
 
   const remove = (id) => {
     setItems((prev) => prev.filter((item) => item.id !== id));
-    toast.error(removeMessage);
+    toast.success(removeMessage);
   };
 
   return { items, add, update, remove };

@@ -6,10 +6,10 @@ import CriticalStockTable from "@/components/features/products/CriticalStockTabl
 import products from "@/data/product";
 import useList from "@/hooks/useList";
 import { formatCurrency } from "@/lib/format";
-import { getTotalRevenue } from "@/lib/products";
+import { getTotalRevenue, isCriticalStock } from "@/lib/products";
 import { sumBy } from "@/lib/stats";
 
-const criticalProducts = products.filter((product) => product.status === "critical");
+const criticalProducts = products.filter(isCriticalStock);
 
 export default function CriticalStock() {
   const { items, remove } = useList(criticalProducts);
@@ -18,7 +18,7 @@ export default function CriticalStock() {
     { title: "Toplam Ürün Sayısı", value: items.length },
     { title: "Toplam Ciro", value: formatCurrency(getTotalRevenue(items)) },
     { title: "Satılan Toplam Ürün Sayısı", value: sumBy(items, (product) => product.sold) },
-    { title: "Kritik Toplam Stok", value: items.length },
+    { title: "Kritik Toplam Stok", value: sumBy(items, (product) => product.stock) },
   ];
 
   return (

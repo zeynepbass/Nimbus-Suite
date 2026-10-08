@@ -9,7 +9,7 @@ import { Label } from "@/components/ui/label";
 import { getHomePath, login } from "@/lib/auth";
 import { saveLastLogin } from "@/lib/lastLogin";
 
-const INPUT_STYLE = "h-9 rounded-sm border-gray-300 text-sm focus-visible:ring-0 focus:border-gray-500";
+const INPUT_STYLE = "h-9 rounded-sm border-gray-300 text-sm focus-visible:ring-1 focus-visible:ring-[#102E46] focus-visible:border-[#102E46]";
 
 export default function LoginForm() {
   const router = useRouter();
@@ -44,6 +44,8 @@ export default function LoginForm() {
         <Input
           id="email"
           type="email"
+          autoComplete="username"
+          required
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           className={INPUT_STYLE}
@@ -57,6 +59,8 @@ export default function LoginForm() {
         <Input
           id="password"
           type="password"
+          autoComplete="current-password"
+          required
           value={password}
           onChange={(event) => setPassword(event.target.value)}
           className={INPUT_STYLE}
@@ -65,12 +69,12 @@ export default function LoginForm() {
 
       <Button
         type="submit"
-        className="w-full h-9 rounded-sm bg-[#102E46] hover:bg-[#DEE6F1] text-sm font-normal"
+        className="w-full h-9 rounded-sm bg-[#102E46] hover:bg-[#0B2236] text-sm font-normal"
       >
         Giriş
       </Button>
 
-      <p className="text-[11px] text-gray-400 text-center pt-2">
+      <p className="text-[11px] text-gray-500 text-center pt-2">
         Yetkisiz erişimler kayıt altına alınmaktadır
       </p>
     </form>

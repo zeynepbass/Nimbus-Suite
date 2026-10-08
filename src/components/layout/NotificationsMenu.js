@@ -1,52 +1,69 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Bell } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import products from "@/data/product";
 import { isCriticalStock } from "@/lib/products";
 
+const criticalProducts = products.filter(isCriticalStock).toReversed();
+
 export default function NotificationsMenu() {
-  const router = useRouter();
-  const [open, setOpen] = useState(false);
-  const criticalProducts = products.filter(isCriticalStock);
-
   return (
-    <div className="relative">
-      <button
-        className="relative h-9 w-9 flex items-center justify-center"
-        onClick={() => setOpen(!open)}
-      >
-        <Bell className="h-5 w-5 text-[#102E46]" />
-        <span className="absolute -top-1 -right-1 h-4 w-4 text-xs bg-[#6C120B] text-white rounded-full flex items-center justify-center">
-          {criticalProducts.length}
-        </span>
-      </button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="relative h-9 w-9 flex items-center justify-center rounded-md"
+          aria-label={`Bildirimler, ${criticalProducts.length} kritik stok uyarısı`}
+        >
+          <Bell className="h-5 w-5 text-[#102E46]" />
+          {criticalProducts.length > 0 && (
+            <span className="absolute -top-1 -right-1 h-4 w-4 text-xs bg-[#6C120B] text-white rounded-full flex items-center justify-center">
+              {criticalProducts.length}
+            </span>
+          )}
+        </button>
+      </DropdownMenuTrigger>
 
-      {open && (
-        <div className="absolute right-0 top-11 w-64 rounded-md border bg-background shadow-lg z-50">
-          <div className="p-2 border-b text-sm font-semibold">Bildirimler</div>
+      <DropdownMenuContent align="end" className="w-64">
+        <DropdownMenuLabel>Bildirimler</DropdownMenuLabel>
+        <DropdownMenuSeparator />
 
-          <ul className="space-y-2">
-            {criticalProducts.toReversed().map((product) => (
-              <li
-                key={product.id}
-                className="flex justify-between items-center px-4 py-2 text-sm"
-              >
-                <span className="font-medium text-gray-700">{product.name}</span>
-                <span className="text-red-900 font-semibold">Stok: {product.stock}</span>
-              </li>
-            ))}
-          </ul>
+        {criticalProducts.length === 0 && (
+          <p className="px-2 py-3 text-sm text-muted-foreground text-center">
+            Kritik stok uyarısı yok
+          </p>
+        )}
 
-          <div
-            className="p-2 border-t text-xs text-muted-foreground text-center cursor-pointer"
-            onClick={() => router.push("/dashboard/critical")}
+        {criticalProducts.map((product) => (
+          <DropdownMenuItem key={product.id} asChild>
+            <Link
+              href={`/dashboard/critical/${product.id}`}
+              className="flex justify-between gap-2"
+            >
+              <span className="font-medium text-gray-700">{product.name}</span>
+              <span className="text-red-900 font-semibold">Stok: {product.stock}</span>
+            </Link>
+          </DropdownMenuItem>
+        ))}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <Link
+            href="/dashboard/critical"
+            className="justify-center text-xs text-muted-foreground"
           >
             Stokları görüntüle
-          </div>
-        </div>
-      )}
-    </div>
+          </Link>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

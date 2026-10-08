@@ -6,11 +6,12 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import { isActivePath } from "@/config/menu";
 import { cn } from "@/lib/utils";
 
 const HIDE_WHEN_COLLAPSED = "group-data-[collapsible=icon]:hidden";
 
-export default function SidebarNavGroup({ group, isOpen, onToggle }) {
+export default function SidebarNavGroup({ group, pathname, isOpen, onToggle }) {
   const Icon = group.icon;
   const hasChildren = Boolean(group.children);
 
@@ -31,11 +32,19 @@ export default function SidebarNavGroup({ group, isOpen, onToggle }) {
       <SidebarMenu>
         <SidebarMenuItem>
           {group.href ? (
-            <SidebarMenuButton tooltip={group.label} asChild>
+            <SidebarMenuButton
+              tooltip={group.label}
+              isActive={isActivePath(pathname, group.href)}
+              asChild
+            >
               <Link href={group.href}>{content}</Link>
             </SidebarMenuButton>
           ) : (
-            <SidebarMenuButton tooltip={group.label} onClick={onToggle}>
+            <SidebarMenuButton
+              tooltip={group.label}
+              aria-expanded={isOpen}
+              onClick={onToggle}
+            >
               {content}
             </SidebarMenuButton>
           )}
@@ -47,7 +56,7 @@ export default function SidebarNavGroup({ group, isOpen, onToggle }) {
 
             return (
               <SidebarMenuItem key={item.href} className={cn("ml-8", HIDE_WHEN_COLLAPSED)}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton isActive={isActivePath(pathname, item.href)} asChild>
                   <Link href={item.href}>
                     <ChildIcon className="text-[#102E46]" />
                     <span>{item.label}</span>

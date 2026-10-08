@@ -12,10 +12,11 @@ import EmployeeCreateSheet from "@/components/features/employees/EmployeeCreateS
 import EmployeeUpdateDialog from "@/components/features/employees/EmployeeUpdateDialog";
 import { withFullName } from "@/components/features/employees/employeeForm";
 import { toEmployeeRows } from "@/components/features/employees/employeeExcel";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import employeesData from "@/data/employees";
 import useList from "@/hooks/useList";
-import { formatDate } from "@/lib/format";
+import { isOnLeaveToday } from "@/lib/employees";
+import { formatDate, getInitials } from "@/lib/format";
 import { nextId } from "@/lib/ids";
 import { averageBy } from "@/lib/stats";
 
@@ -27,6 +28,7 @@ const staticColumns = [
     cell: ({ row }) => (
       <Avatar className="mx-auto">
         <AvatarImage src={row.getValue("avatar")} alt={row.original.fullName} />
+        <AvatarFallback>{getInitials(row.original.fullName)}</AvatarFallback>
       </Avatar>
     ),
   },
@@ -59,14 +61,16 @@ const staticColumns = [
 
 export default function EmployeeTable() {
   const router = useRouter();
-  const { items: employees, add, update, remove } = useList(employeesData);
+  const { items: employees, add, update, remove } = useList(employeesData, {
+    removeMessage: "Personel silindi",
+  });
   const [selected, setSelected] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const stats = [
     { title: "Toplam Personel", value: employees.length },
     { title: "Aktif Personel", value: employees.filter((e) => e.status === "active").length },
-    { title: "İzinde Olanlar", value: employees.filter((e) => e.leaveDates?.length > 0).length },
+    { title: "İzinde Olanlar", value: employees.filter(isOnLeaveToday).length },
     {
       title: "Ortalama Performans",
       value: averageBy(employees, (e) => e.performanceScore).toFixed(1),
@@ -105,7 +109,7 @@ export default function EmployeeTable() {
         tone: "accent",
         onClick: () => router.push(`/humanresources/employees/${employee.id}`),
       },
-      { label: "İptal Et", tone: "danger", onClick: () => remove(employee.id) },
+      { label: "Sil", tone: "danger", onClick: () => remove(employee.id) },
     ]),
   ];
 

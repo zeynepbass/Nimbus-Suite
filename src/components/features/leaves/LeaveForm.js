@@ -1,3 +1,4 @@
+import { useId } from "react";
 import { Button } from "@/components/ui/button";
 import {
   InputGroup,
@@ -12,21 +13,32 @@ const SELECT_STYLE =
 const LEAVE_TYPES = ["Yıllık İzin", "Mazeret İzni", "Rapor"];
 
 function LabeledInput({ label, ...props }) {
+  const id = useId();
+
   return (
     <InputGroup>
-      <InputGroupInput {...props} />
+      <InputGroupInput id={id} {...props} />
       <InputGroupAddon>
-        <Label className="pr-2">{label}</Label>
+        <Label htmlFor={id} className="pr-2">
+          {label}
+        </Label>
       </InputGroupAddon>
     </InputGroup>
   );
 }
 
-export default function LeaveForm({ values, onChange, onSave }) {
+export default function LeaveForm({ values, onChange, onSave, onCancel }) {
+  const typeId = useId();
+  const statusId = useId();
+
   const bind = (name) => ({
     value: values[name],
     onChange: (event) => onChange({ ...values, [name]: event.target.value }),
   });
+
+  const leaveTypes = LEAVE_TYPES.includes(values.type)
+    ? LEAVE_TYPES
+    : [values.type, ...LEAVE_TYPES];
 
   return (
     <div className="w-full max-w-md">
@@ -35,19 +47,19 @@ export default function LeaveForm({ values, onChange, onSave }) {
           <h2 className="text-lg font-semibold">Personel İzin Güncelle</h2>
         </div>
 
-        <LabeledInput label="Ad Soyad" placeholder="Ad Soyad" {...bind("fullName")} />
-        <LabeledInput label="Departman" placeholder="Departman" {...bind("department")} />
+        <LabeledInput label="Ad Soyad" value={values.fullName} readOnly />
+        <LabeledInput label="Departman" value={values.department} readOnly />
 
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <LabeledInput label="Başlangıç" type="date" {...bind("from")} />
-          <LabeledInput label="Bitiş" type="date" {...bind("to")} />
+          <LabeledInput label="Bitiş" type="date" min={values.from} {...bind("to")} />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-1">
-            <Label>İzin Türü</Label>
-            <select className={SELECT_STYLE} {...bind("type")}>
-              {LEAVE_TYPES.map((type) => (
+            <Label htmlFor={typeId}>İzin Türü</Label>
+            <select id={typeId} className={SELECT_STYLE} {...bind("type")}>
+              {leaveTypes.map((type) => (
                 <option key={type} value={type}>
                   {type}
                 </option>
@@ -56,15 +68,18 @@ export default function LeaveForm({ values, onChange, onSave }) {
           </div>
 
           <div className="space-y-1">
-            <Label>Durum</Label>
-            <select className={SELECT_STYLE} {...bind("status")}>
+            <Label htmlFor={statusId}>Durum</Label>
+            <select id={statusId} className={SELECT_STYLE} {...bind("status")}>
               <option value="active">Aktif</option>
               <option value="passive">Pasif</option>
             </select>
           </div>
         </div>
 
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-2">
+          <Button variant="outline" onClick={onCancel}>
+            Vazgeç
+          </Button>
           <Button onClick={onSave} className="w-1/2">
             Güncelle
           </Button>

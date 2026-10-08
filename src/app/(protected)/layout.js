@@ -1,41 +1,37 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import AppSidebar from "@/components/layout/AppSidebar";
 import Header from "@/components/layout/Header";
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { getCurrentUser, getRedirectPath } from "@/lib/auth";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { getRedirectPath } from "@/lib/auth";
 
 export default function ProtectedLayout({ children }) {
   const router = useRouter();
   const pathname = usePathname();
-  const [checking, setChecking] = useState(true);
+  const user = useCurrentUser();
+
+  const redirectPath = user === undefined ? null : getRedirectPath(user, pathname);
 
   useEffect(() => {
-    const redirectPath = getRedirectPath(getCurrentUser(), pathname);
+    if (redirectPath) router.replace(redirectPath);
+  }, [redirectPath, router]);
 
-    if (redirectPath) {
-      router.replace(redirectPath);
-      return;
-    }
-
-    setChecking(false);
-  }, [pathname, router]);
-
-  if (checking) return null;
+  if (user === undefined || redirectPath) return null;
 
   return (
     <SidebarProvider>
       <div className="flex h-screen w-full">
         <AppSidebar />
 
-        <div className="flex flex-col flex-1">
+        <div className="flex min-w-0 flex-col flex-1">
           <Header />
 
           <main className="flex-1 overflow-auto">{children}</main>
-          <footer className="text-right text-gray-400 p-3 text-sm">
-            Nimbus Admin © 2026 · Role-based Access · Audit Ready
+          <footer className="text-right text-gray-500 p-3 text-sm">
+            Nimbus ERP © 2026 · Role-based Access · Audit Ready
           </footer>
         </div>
       </div>

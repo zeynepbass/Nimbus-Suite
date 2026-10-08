@@ -14,7 +14,7 @@ import {
 } from "@/components/ui/sheet";
 
 const DefaultTrigger = (
-  <Button className="bg-[#628DD0] text-white rounded-l px-4 py-2">+ Ekle</Button>
+  <Button className="bg-[#628DD0] text-white px-4 py-2">+ Ekle</Button>
 );
 
 export default function FormSheet({
@@ -36,7 +36,7 @@ export default function FormSheet({
         <SheetTrigger asChild>{trigger}</SheetTrigger>
       </div>
 
-      <SheetContent>
+      <SheetContent className="overflow-y-auto">
         <SheetHeader>
           <SheetTitle>{title}</SheetTitle>
           <SheetDescription>{description}</SheetDescription>

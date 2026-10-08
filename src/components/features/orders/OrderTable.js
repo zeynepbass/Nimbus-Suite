@@ -10,7 +10,7 @@ import { toOrderRows } from "@/components/features/orders/orderExcel";
 import ordersData from "@/data/orders";
 import useList from "@/hooks/useList";
 import { formatCurrency } from "@/lib/format";
-import { hasStep } from "@/lib/orders";
+import { countByLastStep } from "@/lib/orders";
 import { sumBy } from "@/lib/stats";
 
 export default function OrderTable() {
@@ -20,8 +20,8 @@ export default function OrderTable() {
   const stats = [
     { title: "Toplam Sipariş Sayısı", value: orders.length },
     { title: "Toplam Ciro", value: formatCurrency(sumBy(orders, (order) => order.totalPrice)) },
-    { title: "Tamamlanan", value: orders.filter((order) => hasStep(order, "completed")).length },
-    { title: "Bekleyen", value: orders.filter((order) => hasStep(order, "pending")).length },
+    { title: "Tamamlanan", value: countByLastStep(orders, "completed") },
+    { title: "Bekleyen", value: countByLastStep(orders, "pending") },
   ];
 
   const columns = [
