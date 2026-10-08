@@ -1,10 +1,38 @@
-import jsPDF from "jspdf";
-import autoTable from "jspdf-autotable";
-import { STATUS } from "@/constants/status";
+import { PAYMENT_LABELS, STATUS } from "@/constants/status";
 import { formatDate } from "@/lib/format";
 
-export const downloadOrderPDF = (order) => {
+const UNSUPPORTED_CHARS = {
+  ş: "s",
+  Ş: "S",
+  ğ: "g",
+  Ğ: "G",
+  ı: "i",
+  İ: "I",
+  "₺": "TL ",
+  "⭐": "",
+};
+
+// jsPDF'in yerleşik fontları bu karakterleri içermediği için metinler sadeleştirilir.
+const toPdfText = (value) =>
+  Array.isArray(value)
+    ? value.map(toPdfText)
+    : String(value).replace(/[şŞğĞıİ₺⭐]/g, (char) => UNSUPPORTED_CHARS[char]);
+
+async function createDocument() {
+  const [{ default: jsPDF }, { default: autoTable }] = await Promise.all([
+    import("jspdf"),
+    import("jspdf-autotable"),
+  ]);
+
   const doc = new jsPDF();
+  const writeText = doc.text.bind(doc);
+  doc.text = (text, ...rest) => writeText(toPdfText(text), ...rest);
+
+  return { doc, autoTable };
+}
+
+export const downloadOrderPDF = async (order) => {
+  const { doc, autoTable } = await createDocument();
 
   doc.setFontSize(18);
   doc.text("Siparis Faturasi", 14, 20);
@@ -13,7 +41,7 @@ export const downloadOrderPDF = (order) => {
   doc.text(`Siparis No: ${order.id}`, 14, 30);
   doc.text(`Müsteri: ${order.customerName}`, 14, 36);
   doc.text(`Tarih: ${formatDate(order.createdAt)}`, 14, 42);
-  doc.text(`Ödeme: ${order.paymentMethod}`, 14, 48);
+  doc.text(`Ödeme: ${PAYMENT_LABELS[order.paymentMethod] ?? order.paymentMethod}`, 14, 48);
   const timeline = order.timeline || [];
   const lastStep = timeline[timeline.length - 1];
   doc.text(`Durum: ${lastStep ? lastStep.label : "Bilinmiyor"}`, 14, 54);
@@ -38,13 +66,11 @@ export const downloadOrderPDF = (order) => {
 
   doc.text(`Genel Toplam: ₺${subTotal}`, 14, finalY);
 
-  doc.setFontSize(13);
-
   doc.save(`siparis-${order.id}.pdf`);
 };
 
-export const downloadProductPDF = (order) => {
-  const doc = new jsPDF();
+export const downloadProductPDF = async (order) => {
+  const { doc, autoTable } = await createDocument();
 
   doc.setFontSize(18);
   doc.text("Ürün Raporu", 14, 20);
@@ -102,13 +128,13 @@ export const downloadProductPDF = (order) => {
   doc.setFontSize(13);
   doc.text(`Genel Toplam: ₺${total}`, 14, finalY);
 
-  doc.save(`Ürün-${order.id}.pdf`);
+  doc.save(`urun-${order.id}.pdf`);
 };
 
-export const downloadSupplierPDF = (supplier) => {
+export const downloadSupplierPDF = async (supplier) => {
   if (!supplier) return;
 
-  const doc = new jsPDF();
+  const { doc } = await createDocument();
 
   let y = 10;
 
@@ -131,7 +157,7 @@ export const downloadSupplierPDF = (supplier) => {
   y += 5;
   doc.text(`Firma Türü: ${supplier.companyType}`, 10, y);
   y += 5;
-  doc.text(`Durum: ${supplier.status}`, 10, y);
+  doc.text(`Durum: ${STATUS[supplier.status]?.label ?? supplier.status}`, 10, y);
   y += 5;
   doc.text(`Puan: ${supplier.rating}`, 10, y);
   y += 10;
@@ -188,8 +214,9 @@ export const downloadSupplierPDF = (supplier) => {
 
   doc.save(`supplier-${supplier.id}.pdf`);
 };
-export const downloadEmployeePDF = (user) => {
-  const doc = new jsPDF();
+
+export const downloadEmployeePDF = async (user) => {
+  const { doc, autoTable } = await createDocument();
 
   doc.setFontSize(18);
   doc.text("Personel Detay Bilgileri", 14, 20);

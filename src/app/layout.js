@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata = {
-  title: "Nimbus Admin",
+  title: "Nimbus ERP",
   description: "Rol tabanlı ERP yönetim paneli",
 };
 

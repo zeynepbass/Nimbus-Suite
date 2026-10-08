@@ -1,25 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { getCurrentUser, getHomePath } from "@/lib/auth";
+import useCurrentUser from "@/hooks/useCurrentUser";
+import { getHomePath } from "@/lib/auth";
 
 export default function AuthLayout({ children }) {
   const router = useRouter();
-  const [checking, setChecking] = useState(true);
+  const user = useCurrentUser();
 
   useEffect(() => {
-    const user = getCurrentUser();
+    if (user) router.replace(getHomePath(user));
+  }, [user, router]);
 
-    if (user) {
-      router.replace(getHomePath(user));
-      return;
-    }
-
-    setChecking(false);
-  }, [router]);
-
-  if (checking) return null;
+  if (user !== null) return null;
 
   return children;
 }

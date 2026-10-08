@@ -64,3 +64,11 @@ export const menu = [
 ];
 
 export const isVisibleFor = (item, role) => !item.roles || item.roles.includes(role);
+
+export const isActivePath = (pathname, href) =>
+  pathname === href || pathname.startsWith(`${href}/`);
+
+export const getMenuLinks = (role) =>
+  menu
+    .filter((item) => role === undefined || isVisibleFor(item, role))
+    .flatMap((item) => item.children ?? [item]);

@@ -12,7 +12,7 @@ export default function UserProfile() {
 
   const handleLogout = () => {
     logout();
-    router.push("/login");
+    router.replace("/login");
   };
 
   return (
@@ -24,7 +24,7 @@ export default function UserProfile() {
             alt={user.name}
             width={36}
             height={36}
-            className="rounded-full"
+            className="h-9 w-9 shrink-0 rounded-full object-cover group-data-[collapsible=icon]:hidden"
           />
         )}
 
@@ -35,6 +35,7 @@ export default function UserProfile() {
 
         <SidebarMenuButton
           tooltip="Çıkış"
+          aria-label="Çıkış yap"
           className="ml-auto w-auto justify-end"
           onClick={handleLogout}
         >

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { toast } from "sonner";
 import DataTable from "@/components/common/DataTable";
 import StatGrid from "@/components/common/StatGrid";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -8,6 +9,7 @@ import { actionsColumn } from "@/components/common/columns";
 import LeaveForm from "@/components/features/leaves/LeaveForm";
 import employeesData from "@/data/employees";
 import useList from "@/hooks/useList";
+import { isOnLeaveToday } from "@/lib/employees";
 import { formatDate } from "@/lib/format";
 import { averageBy } from "@/lib/stats";
 
@@ -22,8 +24,9 @@ const EMPTY_FORM = {
 
 const toLeaveRows = (employees) =>
   employees.flatMap((employee) =>
-    employee.leaveDates.map((leave) => ({
+    employee.leaveDates.map((leave, leaveIndex) => ({
       id: employee.id,
+      leaveIndex,
       fullName: employee.fullName,
       department: employee.department,
       from: leave.from,
@@ -68,7 +71,9 @@ const staticColumns = [
 ];
 
 export default function LeaveTable({ editable = false }) {
-  const { items: employees, update, remove } = useList(employeesData);
+  const { items: employees, update, remove } = useList(employeesData, {
+    removeMessage: "Personel silindi",
+  });
   const [selected, setSelected] = useState(null);
   const [form, setForm] = useState(EMPTY_FORM);
 
@@ -77,7 +82,7 @@ export default function LeaveTable({ editable = false }) {
   const stats = [
     { title: "Toplam Personel", value: employees.length },
     { title: "Aktif Personel", value: employees.filter((e) => e.status === "active").length },
-    { title: "İzinde Olanlar", value: leaves.length },
+    { title: "İzinde Olanlar", value: employees.filter(isOnLeaveToday).length },
     {
       title: "Ortalama Performans",
       value: averageBy(employees, (e) => e.performanceScore).toFixed(1),
@@ -97,26 +102,37 @@ export default function LeaveTable({ editable = false }) {
   };
 
   const handleSave = () => {
-    if (!selected) return;
+    const employee = employees.find((item) => item.id === selected?.id);
+    if (!employee) return;
 
-    const employee = employees.find((item) => item.id === selected.id);
+    if (!form.from || !form.to) {
+      toast.error("Başlangıç ve bitiş tarihi zorunlu");
+      return;
+    }
+    if (form.to < form.from) {
+      toast.error("Bitiş tarihi başlangıçtan önce olamaz");
+      return;
+    }
 
-    update(selected.id, {
-      leaveDates: [
-        { ...employee.leaveDates[0], from: form.from, to: form.to, type: form.type },
-      ],
+    update(employee.id, {
+      leaveDates: employee.leaveDates.map((leave, index) =>
+        index === selected.leaveIndex
+          ? { ...leave, from: form.from, to: form.to, type: form.type }
+          : leave
+      ),
       status: form.status,
     });
     setSelected(null);
+    toast.success("İzin güncellendi");
   };
 
   const columns = [
     ...staticColumns,
     actionsColumn((leave) => [
-      { label: "Personel Sil", onClick: () => remove(leave.id) },
       ...(editable
-        ? [{ label: "Personel Güncelle", onClick: () => startEditing(leave) }]
+        ? [{ label: "İzni Güncelle", onClick: () => startEditing(leave) }]
         : []),
+      { label: "Personel Sil", tone: "danger", onClick: () => remove(leave.id) },
     ]),
   ];
 
@@ -124,7 +140,14 @@ export default function LeaveTable({ editable = false }) {
     <div className="p-6 space-y-8">
       {!editable && <StatGrid stats={stats} />}
 
-      {selected && <LeaveForm values={form} onChange={setForm} onSave={handleSave} />}
+      {selected && (
+        <LeaveForm
+          values={form}
+          onChange={setForm}
+          onSave={handleSave}
+          onCancel={() => setSelected(null)}
+        />
+      )}
 
       <DataTable
         title="Personel İzin Listesi"

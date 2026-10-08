@@ -1,6 +1,5 @@
-import * as XLSX from "xlsx";
-
-export function exportToExcel(rows, name = "export") {
+export async function exportToExcel(rows, name = "export") {
+  const XLSX = await import("xlsx");
   const worksheet = XLSX.utils.json_to_sheet(rows);
   const workbook = XLSX.utils.book_new();
 
