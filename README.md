@@ -124,6 +124,3 @@ src
 └── lib                     Auth, storage, formatting, validation, PDF and Excel helpers
 ```
 
-## License
-
-See the [LICENCE](LICENCE) file for the license terms.
