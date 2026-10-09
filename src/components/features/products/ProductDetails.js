@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { DetailActions, DetailPage } from "@/components/common/DetailPage";
 import InfoCard from "@/components/common/InfoCard";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -9,7 +10,8 @@ import { formatCurrency, formatDate } from "@/lib/format";
 import { downloadProductPDF } from "@/lib/pdf";
 import { getProductRevenue } from "@/lib/products";
 
-export default function ProductDetails({ product }) {
+export default function ProductDetails({ product: initialProduct }) {
+  const [product, setProduct] = useState(initialProduct);
   const { contentRef, print } = usePrint();
 
   const fields = [
@@ -35,7 +37,7 @@ export default function ProductDetails({ product }) {
         onPrint={print}
         onDownload={() => downloadProductPDF(product)}
       >
-        <ProductEditSheet product={product} />
+        <ProductEditSheet product={product} onSave={setProduct} />
       </DetailActions>
     </DetailPage>
   );

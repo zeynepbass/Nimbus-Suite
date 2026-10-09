@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { CheckCircle2, Clock, ShoppingCart, Wallet } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
 import PageContainer from "@/components/common/PageContainer";
 import StatGrid from "@/components/common/StatGrid";
@@ -18,10 +19,10 @@ export default function OrderTable() {
   const { items: orders, remove } = useList(ordersData);
 
   const stats = [
-    { title: "Toplam Sipariş Sayısı", value: orders.length },
-    { title: "Toplam Ciro", value: formatCurrency(sumBy(orders, (order) => order.totalPrice)) },
-    { title: "Tamamlanan", value: countByLastStep(orders, "completed") },
-    { title: "Bekleyen", value: countByLastStep(orders, "pending") },
+    { title: "Toplam Sipariş Sayısı", icon: ShoppingCart, value: orders.length },
+    { title: "Toplam Ciro", icon: Wallet, value: formatCurrency(sumBy(orders, (order) => order.totalPrice)) },
+    { title: "Tamamlanan", icon: CheckCircle2, value: countByLastStep(orders, "completed") },
+    { title: "Bekleyen", icon: Clock, value: countByLastStep(orders, "pending") },
   ];
 
   const columns = [

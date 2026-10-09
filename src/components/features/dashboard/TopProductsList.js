@@ -14,7 +14,7 @@ function Metric({ label, children }) {
 export default function TopProductsList({ products }) {
   return (
     <div className="space-y-4 overflow-y-auto max-h-100">
-      <h6 className="font-bold">EN ÇOK SATAN ÜRÜNLER</h6>
+      <h3 className="text-xs font-semibold tracking-wide text-gray-500">EN ÇOK SATAN ÜRÜNLER</h3>
 
       {products.map((product) => (
         <div

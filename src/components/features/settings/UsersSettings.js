@@ -7,7 +7,7 @@ import { userColumns as col } from "@/components/features/users/userColumns";
 
 const columns = (onRemove) => [
   selectColumn,
-  { accessorKey: "id", header: "Kullanıcı No" },
+  col.id("Kullanıcı No"),
   col.avatar,
   col.name,
   col.email,

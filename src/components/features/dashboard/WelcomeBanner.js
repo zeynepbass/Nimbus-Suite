@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function WelcomeBanner({ name }) {
   return (
     <div className="relative min-h-40">
@@ -5,9 +7,12 @@ export default function WelcomeBanner({ name }) {
         className="min-h-40 rounded-xl bg-cover bg-center"
         style={{ backgroundImage: "url('/images/wave-haikei.png')" }}
       >
-        <img
+        <Image
           src="/images/curve-rafiki.png"
           alt=""
+          width={280}
+          height={280}
+          priority
           className="absolute -top-[80px] left-0 w-70 h-70 z-20 pointer-events-none hidden md:block"
         />
 

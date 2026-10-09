@@ -12,7 +12,6 @@ const UNSUPPORTED_CHARS = {
   "⭐": "",
 };
 
-// jsPDF'in yerleşik fontları bu karakterleri içermediği için metinler sadeleştirilir.
 const toPdfText = (value) =>
   Array.isArray(value)
     ? value.map(toPdfText)

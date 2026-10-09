@@ -1,8 +1,5 @@
 export const getLastStep = (order) => order.timeline?.at(-1) ?? null;
 
-export const hasStep = (order, key) =>
-  order.timeline?.some((step) => step.key === key) ?? false;
-
 export const countByLastStep = (orders, key) =>
   orders.filter((order) => getLastStep(order)?.key === key).length;
 

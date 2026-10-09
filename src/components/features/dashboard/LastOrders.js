@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, CheckCircle2, Package, Wallet } from "lucide-react";
 import PageContainer from "@/components/common/PageContainer";
 import StatGrid from "@/components/common/StatGrid";
 import ProductTable from "@/components/features/products/ProductTable";
@@ -12,10 +13,10 @@ export default function LastOrders() {
   const { items, remove } = useList(products);
 
   const stats = [
-    { title: "Toplam Ürün", value: items.length },
-    { title: "Toplam Ciro", value: formatCurrency(getTotalRevenue(items)) },
-    { title: "Tamamlanan", value: items.filter((item) => item.status === "active").length },
-    { title: "Kritik Stok", value: items.filter(isCriticalStock).length },
+    { title: "Toplam Ürün", icon: Package, value: items.length },
+    { title: "Toplam Ciro", icon: Wallet, value: formatCurrency(getTotalRevenue(items)) },
+    { title: "Tamamlanan", icon: CheckCircle2, value: items.filter((item) => item.status === "active").length },
+    { title: "Kritik Stok", icon: AlertTriangle, value: items.filter(isCriticalStock).length },
   ];
 
   return (

@@ -8,7 +8,6 @@ import { parseStored, readRawStorage, subscribeStorage } from "@/lib/storage";
 const getSnapshot = () => readRawStorage(STORAGE_KEYS.USER);
 const getServerSnapshot = () => undefined;
 
-// Hydration tamamlanana kadar undefined, oturum yoksa null döner.
 export default function useCurrentUser() {
   const raw = useSyncExternalStore(subscribeStorage, getSnapshot, getServerSnapshot);
 

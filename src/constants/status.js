@@ -1,21 +1,21 @@
-const GREEN = "bg-green-100 text-green-700";
-const YELLOW = "bg-yellow-100 text-yellow-700";
-const RED = "bg-red-100 text-red-700";
-const GRAY = "bg-gray-100 text-gray-600";
+const GREEN = { className: "bg-green-100 text-green-700", dot: "bg-green-500" };
+const YELLOW = { className: "bg-yellow-100 text-yellow-700", dot: "bg-yellow-500" };
+const RED = { className: "bg-red-100 text-red-700", dot: "bg-red-500" };
+const GRAY = { className: "bg-gray-100 text-gray-600", dot: "bg-gray-400" };
 
 export const STATUS = {
-  active: { label: "Aktif", className: GREEN },
-  passive: { label: "Pasif", className: GRAY },
-  paused: { label: "Pasif", className: YELLOW },
-  inactive: { label: "Pasif", className: RED },
-  critical: { label: "Kritik", className: RED },
-  out_of_stock: { label: "Stok Yok", className: YELLOW },
-  completed: { label: "Tamamlandı", className: GREEN },
-  pending: { label: "Beklemede", className: YELLOW },
-  cancelled: { label: "İptal", className: RED },
+  active: { label: "Aktif", ...GREEN },
+  passive: { label: "Pasif", ...GRAY },
+  paused: { label: "Pasif", ...YELLOW },
+  inactive: { label: "Pasif", ...RED },
+  critical: { label: "Kritik", ...RED },
+  out_of_stock: { label: "Stok Yok", ...YELLOW },
+  completed: { label: "Tamamlandı", ...GREEN },
+  pending: { label: "Beklemede", ...YELLOW },
+  cancelled: { label: "İptal", ...RED },
 };
 
-export const FALLBACK_STATUS_STYLE = GRAY;
+export const FALLBACK_STATUS = GRAY;
 
 export const PAYMENT_LABELS = {
   credit_card: "Kredi Kartı",

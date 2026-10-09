@@ -1,20 +1,29 @@
 "use client";
 
 import { useEffect } from "react";
+import { toast } from "sonner";
 import EditDialog from "@/components/common/EditDialog";
 import TextField from "@/components/common/TextField";
+import { validateSupplier } from "@/components/features/suppliers/supplierForm";
 import useForm from "@/hooks/useForm";
 
 export default function SupplierUpdateDialog({ supplier, open, onOpenChange, onSave }) {
   const { values, setValues, setValue } = useForm(supplier ?? {});
 
   useEffect(() => {
-    if (supplier) setValues(supplier);
-  }, [supplier, setValues]);
+    if (open && supplier) setValues(supplier);
+  }, [open, supplier, setValues]);
 
   if (!supplier || !values.contact) return null;
 
   const handleSave = () => {
+    const error = validateSupplier(values);
+
+    if (error) {
+      toast.error(error);
+      return;
+    }
+
     onSave(values);
     onOpenChange(false);
   };
@@ -34,7 +43,7 @@ export default function SupplierUpdateDialog({ supplier, open, onOpenChange, onS
       title="Tedarikçi Güncelle"
       description="Tedarikçi bilgilerini düzenleyin"
       onSave={handleSave}
-      className="max-w-2xl"
+      className="sm:max-w-2xl"
     >
       <div className="space-y-4 text-sm">
         {field("name", "Firma Adı", values.name)}

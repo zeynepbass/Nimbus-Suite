@@ -1,5 +1,6 @@
 "use client";
 
+import { AlertTriangle, CheckCircle2, Package, Wallet } from "lucide-react";
 import OrderStatusChart from "@/components/charts/OrderStatusChart";
 import SalesChart from "@/components/charts/SalesChart";
 import Panel from "@/components/common/Panel";
@@ -29,10 +30,10 @@ export default function DashboardSummary() {
   const { items: products, remove } = useList(productsData);
 
   const stats = [
-    { title: "Toplam Ürün", value: products.length },
-    { title: "Toplam Ciro", value: formatCurrency(getTotalRevenue(products)) },
-    { title: "Aktif Ürünler", value: products.filter((p) => p.status === "active").length },
-    { title: "Kritik Stok", value: products.filter(isCriticalStock).length },
+    { title: "Toplam Ürün", icon: Package, value: products.length },
+    { title: "Toplam Ciro", icon: Wallet, value: formatCurrency(getTotalRevenue(products)) },
+    { title: "Aktif Ürünler", icon: CheckCircle2, value: products.filter((p) => p.status === "active").length },
+    { title: "Kritik Stok", icon: AlertTriangle, value: products.filter(isCriticalStock).length },
   ];
 
   return (
@@ -51,7 +52,7 @@ export default function DashboardSummary() {
           </Panel>
 
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-            <div className="bg-zinc-100 rounded-2xl shadow-sm">
+            <div className="bg-white border rounded-2xl shadow-xs">
               <SupplierList suppliers={topSuppliers} />
             </div>
             <Panel>
@@ -79,7 +80,7 @@ export default function DashboardSummary() {
         </Panel>
       </div>
 
-      <div className="col-span-12 bg-zinc-100 rounded-2xl shadow-sm">
+      <div className="col-span-12 bg-white border rounded-2xl shadow-xs px-5 pt-2 pb-3">
         <ProductTable title="ÜRÜN LİSTESİ" products={products} onDelete={remove} />
       </div>
     </div>

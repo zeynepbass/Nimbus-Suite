@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Building2, Pencil } from "lucide-react";
+import InlineNumberInput from "@/components/common/InlineNumberInput";
 import StatusBadge from "@/components/common/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,29 +10,23 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export default function SupplierList({ suppliers, onRatingChange }) {
   const [editingId, setEditingId] = useState(null);
-  const [rating, setRating] = useState("");
 
-  const startEditing = (supplier) => {
-    setEditingId(supplier.id);
-    setRating(supplier.rating);
-  };
-
-  const commit = (id) => {
-    onRatingChange(id, Number(rating));
+  const commit = (id, rating) => {
+    onRatingChange(id, rating);
     setEditingId(null);
   };
 
   return (
     <Card className="w-full bg-transparent shadow-none border-none">
       <CardHeader>
-        <CardTitle>TEDARİKÇİLER</CardTitle>
+        <CardTitle className="text-xs font-semibold tracking-wide text-gray-500">TEDARİKÇİLER</CardTitle>
       </CardHeader>
 
       <CardContent className="space-y-4 border-0">
         {suppliers.map((supplier) => (
           <div
             key={supplier.id}
-            className="flex items-center justify-between rounded-xl border p-4 hover:bg-muted/50 transition"
+            className="flex items-center justify-between gap-3 rounded-xl border p-4 hover:bg-muted/50 transition"
           >
             <div className="space-y-1 mr-auto">
               <div className="flex items-center gap-2">
@@ -46,19 +41,25 @@ export default function SupplierList({ suppliers, onRatingChange }) {
 
             <div className="flex flex-col items-end gap-2">
               {onRatingChange && (
-                <Button onClick={() => startEditing(supplier)}>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  aria-label={`${supplier.name} puanını düzenle`}
+                  onClick={() => setEditingId(supplier.id)}
+                >
                   <Pencil />
                 </Button>
               )}
 
               {editingId === supplier.id ? (
-                <input
-                  autoFocus
-                  type="number"
-                  value={rating}
-                  onChange={(event) => setRating(event.target.value)}
-                  onBlur={() => commit(supplier.id)}
-                  className="bg-[#6c120b] text-white gap-1"
+                <InlineNumberInput
+                  label={`${supplier.name} puanı`}
+                  initialValue={supplier.rating}
+                  max={5}
+                  step={0.1}
+                  onCommit={(rating) => commit(supplier.id, rating)}
+                  onCancel={() => setEditingId(null)}
                 />
               ) : (
                 <Badge className="bg-[#6c120b] text-white gap-1">⭐ {supplier.rating}</Badge>

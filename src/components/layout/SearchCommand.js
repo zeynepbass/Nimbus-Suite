@@ -27,6 +27,7 @@ export default function SearchCommand() {
   const router = useRouter();
   const user = useCurrentUser();
   const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState("");
 
   const quickLinks = getMenuLinks(user?.role).filter(
     (link) => link.href !== SETTINGS_PATH
@@ -34,6 +35,7 @@ export default function SearchCommand() {
 
   const navigate = (href) => {
     setOpen(false);
+    setQuery("");
     router.push(href);
   };
 
@@ -42,6 +44,8 @@ export default function SearchCommand() {
       <CommandInput
         placeholder="Ara…"
         aria-label="Sayfalarda ara"
+        value={query}
+        onValueChange={setQuery}
         onFocus={() => setOpen(true)}
         onBlur={() => setTimeout(() => setOpen(false), 150)}
         className="w-56 placeholder:text-[#102E46]"
