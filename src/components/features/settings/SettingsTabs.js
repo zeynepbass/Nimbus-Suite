@@ -10,6 +10,7 @@ import productsData from "@/data/product";
 import suppliersData from "@/data/supplier";
 import usersData from "@/data/users";
 import useList from "@/hooks/useList";
+import { nextNumericId } from "@/lib/ids";
 
 const members = usersData.filter((user) => user.role === ROLES.USER);
 
@@ -24,13 +25,13 @@ const TAB_TRIGGER = "bg-white text-gray-500";
 const TAB_CONTENT = "bg-white gap-1 text-gray-500 rounded-lg shadow-sm";
 
 export default function SettingsTabs() {
-  const users = useList(members);
+  const users = useList(members, { removeMessage: "Kullanıcı silindi" });
   const suppliers = useList(suppliersData);
   const products = useList(productsData);
 
   return (
     <Tabs defaultValue="account" className="w-full">
-      <TabsList className="gap-2 bg-gray-50">
+      <TabsList className="h-auto flex-wrap justify-start gap-2 bg-gray-50">
         {TABS.map(({ value, label }) => (
           <TabsTrigger key={value} value={value} className={TAB_TRIGGER}>
             {label}
@@ -39,7 +40,11 @@ export default function SettingsTabs() {
       </TabsList>
 
       <TabsContent value="account" className={`${TAB_CONTENT} p-6`}>
-        <UsersSettings users={users.items} onCreate={users.add} onRemove={users.remove} />
+        <UsersSettings
+          users={users.items}
+          onCreate={(user) => users.add({ ...user, id: nextNumericId(usersData.concat(users.items)) })}
+          onRemove={users.remove}
+        />
       </TabsContent>
 
       <TabsContent value="supplier" className={TAB_CONTENT}>

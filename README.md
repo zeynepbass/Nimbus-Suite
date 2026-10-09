@@ -1,112 +1,129 @@
-# Nimbus Admin
+# Nimbus ERP
 
-Next.js ve shadcn/ui ile geliştirilmiş, rol tabanlı bir ERP yönetim paneli. Stok, sipariş, fatura, personel, izin ve tedarikçi süreçlerini tek arayüzde toplar.
+Nimbus ERP is a role-based ERP admin panel built with Next.js and shadcn/ui. It brings products, stock, orders, invoices, employees, leaves, suppliers, users and roles together in a single interface.
 
-Uygulama bir arka uç servisine bağlı değildir. Veriler `src/data` altındaki JSON dosyalarından okunur, yapılan değişiklikler oturum boyunca bellekte tutulur. Oturum bilgisi, son giriş bilgisi ve yazdırılan faturalar tarayıcının `localStorage` alanında saklanır.
+The project is a frontend-only demo. There is no backend: data is read from JSON files under `src/data`, changes live in memory for the current session, and the session, last login info and printed invoices are kept in the browser's `localStorage`.
 
-## Özellikler
+![Dashboard](docs/screenshots/dashboard.png)
 
-**Kimlik doğrulama ve yetkilendirme**
-- E-posta ve şifre ile giriş, son giriş zamanı ve tarayıcı bilgisi
-- Giriş yapmamış kullanıcıları `/login` sayfasına yönlendiren korumalı rotalar
-- Role göre filtrelenen menü ve rota erişimi (`/role` yalnızca `ADMIN` ve `MANAGER` rollerine açıktır)
+## Features
 
-**Dashboard**
-- Toplam ürün, ciro, aktif ürün ve kritik stok kartları
-- Satış grafiği, sipariş durumu dağılımı ve en çok satan ürünler
-- En yüksek puanlı tedarikçiler ve personel performans sıralaması
-- Bugün izinli olan ve yeni başlayan personel
-- Son siparişler ve kritik stok listeleri, ürün detay sayfaları
+- **Dashboard** – revenue, product and critical stock cards, sales chart, order status breakdown, top selling products, top rated suppliers, employee performance ranking, employees on leave today and new hires
+- **Product and stock management** – product list, product detail and edit panel, critical stock list, inline stock editing in settings, critical stock notifications
+- **Order management** – order list, order detail with timeline, edit panel with partial cancel / return, print and PDF output
+- **Invoices** – printing an order creates an invoice record; invoices can be listed, exported, downloaded as PDF and removed
+- **Employee management** – create, update, delete and detail pages with validation, print and PDF output
+- **Leave management** – leave list and leave update form with date range checks
+- **Supplier management** – create, update, delete and detail pages, supplied products, rating editing
+- **Users and roles** – user list and creation, role assignment page restricted to `ADMIN` and `MANAGER`
+- **Authentication and access control** – email / password login against demo accounts, protected routes, role-based menu and route access
+- **Tables** – sorting, ID search, column visibility, pagination and Excel export
+- **Profile settings** – editable profile with photo upload
+- **Responsive layout** – collapsible sidebar, mobile navigation and scrollable tables
 
-**Satış**
-- Sipariş listesi, detay, güncelleme paneli ve zaman çizelgesi
-- Sipariş yazdırma, PDF çıktısı ve yazdırılan siparişlerden oluşan fatura listesi
+## Tech Stack
 
-**İnsan Kaynakları**
-- Personel ekleme, güncelleme, silme ve detay sayfası
-- İzin listesi ve izin güncelleme formu
-- Yazdırma ve PDF çıktısı
-
-**Tedarikçiler**
-- Tedarikçi ekleme, güncelleme, silme ve detay sayfası
-- Tedarik edilen ürünler, minimum sipariş ve teslim süresi bilgileri
-
-**Ayarlar**
-- Profil bilgileri ve fotoğraf güncelleme
-- Kullanıcılar, tedarikçi puanları, stok miktarları ve izinler için sekmeler
-
-**Ortak özellikler**
-- Sıralama, arama, sütun görünürlüğü ve sayfalama destekleyen tablolar
-- Tablolar için Excel dışa aktarma
-- Hızlı erişim araması, kritik stok bildirimleri ve Power BI kısayolu
-
-## Teknolojiler
-
-| Alan | Kullanılan |
+| Area | Technology |
 | --- | --- |
-| Çatı | Next.js 16 (App Router), React 19, React Compiler |
-| Arayüz | Tailwind CSS 4, shadcn/ui, Radix UI, Lucide |
-| Tablo | TanStack Table |
-| Grafik | ApexCharts |
-| Dışa aktarma | xlsx, jsPDF, react-to-print |
-| Bildirim | Sonner |
+| Framework | Next.js 16 (App Router), React 19, React Compiler |
+| Language | JavaScript |
+| Styling | Tailwind CSS 4, tw-animate-css |
+| UI | shadcn/ui, Radix UI, Lucide icons, cmdk |
+| Tables | TanStack Table |
+| Charts | ApexCharts (react-apexcharts) |
+| Export | SheetJS (xlsx), jsPDF, jspdf-autotable, react-to-print |
+| Notifications | Sonner |
 
-## Kurulum
+## Architecture
 
-Node.js 20.9 veya üzeri gereklidir.
+- `src/app` contains routes only. Each page renders a component from `components/features`.
+- Every module has its own folder under `components/features` holding its table, detail view, forms, column definitions and Excel mapping.
+- Shared building blocks live in `components/common` (`DataTable`, `RowActions`, `FormSheet`, `EditDialog`, `TextField`, `StatusBadge`), while `components/ui` holds the shadcn/ui primitives.
+- List state is handled by the `useList` hook and form state by `useForm`; nested fields are updated with path expressions such as `address.city`.
+- Role and route rules are defined in `constants/roles.js` and enforced in `lib/auth.js`. The current user is read through `useCurrentUser`, which subscribes to `localStorage` changes and always resolves the role from the account record.
+- Excel and PDF libraries are loaded on demand, only when an export is triggered.
+
+Access control runs entirely in the browser and is meant for demonstration. A production deployment needs server-side authentication and authorization.
+
+## Screenshots
+
+| Login | Dashboard |
+| --- | --- |
+| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| Products | Critical Stock |
+| --- | --- |
+| ![Products](docs/screenshots/products.png) | ![Critical stock](docs/screenshots/critical-stock.png) |
+
+| Orders | Order Detail |
+| --- | --- |
+| ![Orders](docs/screenshots/orders.png) | ![Order detail](docs/screenshots/order-detail.png) |
+
+| Invoices | Suppliers |
+| --- | --- |
+| ![Invoices](docs/screenshots/invoices.png) | ![Suppliers](docs/screenshots/suppliers.png) |
+
+| Employees | Leaves |
+| --- | --- |
+| ![Employees](docs/screenshots/employees.png) | ![Leaves](docs/screenshots/leaves.png) |
+
+| Roles | Settings and Users |
+| --- | --- |
+| ![Roles](docs/screenshots/roles.png) | ![Settings](docs/screenshots/settings.png) |
+
+## Getting Started
+
+Node.js 20.9 or later is required.
 
 ```bash
 npm install
 npm run dev
 ```
 
-Uygulama `http://localhost:3000` adresinde açılır.
+The app runs at `http://localhost:3000`.
 
-| Komut | Açıklama |
+| Command | Description |
 | --- | --- |
-| `npm run dev` | Geliştirme sunucusunu başlatır |
-| `npm run build` | Üretim derlemesi oluşturur |
-| `npm start` | Üretim derlemesini çalıştırır |
+| `npm run dev` | Starts the development server |
+| `npm run build` | Creates a production build |
+| `npm start` | Serves the production build |
 
-## Demo hesapları
+### Demo accounts
 
-Hesaplar `src/data/users.json` dosyasında tanımlıdır ve tüm hesapların şifresi `123` değeridir.
+Accounts are defined in `src/data/users.json`. Every account uses the password `123`.
 
-| Rol | E-posta | Erişim |
+| Role | Email | Access |
 | --- | --- | --- |
-| `USER` | `user@gmail.com` | Rol yönetimi hariç tüm modüller |
-| `MANAGER` | `users.json` içindeki `MANAGER` hesabı | Tüm modüller ve `/role` |
+| `MANAGER` | `zeynepbas@gmail.com` | All modules, including role management |
+| `USER` | `user@gmail.com` | All modules except role management |
 
-## Proje yapısı
+## Project Structure
 
 ```
 src
-├── app                     Rotalar ve sayfa düzenleri
-│   ├── (auth)              Giriş sayfası
-│   └── (protected)         Oturum gerektiren sayfalar
+├── app
+│   ├── (auth)              Login page
+│   └── (protected)         Pages that require a session
+│       ├── dashboard       Summary, product list, critical stock
+│       ├── sales           Orders, invoices
+│       ├── supplier        Suppliers
+│       ├── humanresources  Employees, leaves
+│       ├── role            Role management
+│       └── settings        Profile, users, supplier ratings, stock, leaves
 ├── components
-│   ├── ui                  shadcn/ui temel bileşenleri
-│   ├── common              Modüller arası ortak bileşenler (tablo, kart, form, rozet)
-│   ├── layout              Sidebar, üst çubuk, arama, bildirimler, breadcrumb
-│   ├── charts              Grafik bileşenleri
-│   └── features            Modül bazlı bileşenler
-│       ├── auth  dashboard  products  orders  invoices
-│       ├── employees  leaves  suppliers  users  roles  settings
-├── config                  Menü tanımı
-├── constants               Rol, durum ve depolama anahtarları
-├── data                    Örnek veri (JSON)
+│   ├── ui                  shadcn/ui primitives
+│   ├── common              Shared table, form, dialog and card components
+│   ├── layout              Sidebar, header, search, notifications, breadcrumb
+│   ├── charts              Chart components
+│   └── features            Module components (auth, dashboard, products, orders,
+│                           invoices, employees, leaves, suppliers, users, roles, settings)
+├── config                  Menu definition
+├── constants               Roles, statuses and storage keys
+├── data                    Sample data (JSON)
 ├── hooks                   useList, useForm, usePrint, useCurrentUser, useIsMobile
-└── lib                     Kimlik doğrulama, depolama, biçimlendirme, PDF, Excel ve hesaplama yardımcıları
+└── lib                     Auth, storage, formatting, validation, PDF and Excel helpers
 ```
 
-### Mimari notlar
+## License
 
-- `app` klasörü yalnızca rotaları içerir. Sayfalar, ilgili `features` bileşenini render eder.
-- Her modül kendi klasöründe toplanır (tablo, detay, form, sütun tanımları, Excel eşlemesi).
-- Tabloların ortak yapısı `common/DataTable`, sütun yardımcıları `common/columns`, durum rozetleri `common/StatusBadge` içindedir.
-- Liste durumu `useList`, form durumu `useForm` hook'ları ile yönetilir. İç içe alanlar `address.city` gibi yol ifadeleriyle güncellenir.
-- Rol ve rota kuralları `constants/roles.js` ve `lib/auth.js` içinde tek yerde tutulur.
-
-## Lisans
-
-Ayrıntılar için [LICENCE](LICENCE) dosyasına bakın.
+See the [LICENCE](LICENCE) file for the license terms.

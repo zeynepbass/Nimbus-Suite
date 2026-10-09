@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { toast } from "sonner";
 import { DetailActions, DetailPage } from "@/components/common/DetailPage";
 import InfoCard from "@/components/common/InfoCard";
 import OrderEditSheet from "@/components/features/orders/OrderEditSheet";
@@ -28,11 +30,12 @@ const formatStepDate = (date) =>
     minute: "2-digit",
   });
 
-export default function OrderDetails({ order }) {
+export default function OrderDetails({ order: initialOrder }) {
+  const [order, setOrder] = useState(initialOrder);
   const { contentRef, print } = usePrint();
 
   const handlePrint = () => {
-    saveInvoice(order);
+    if (!saveInvoice(order)) toast.error("Fatura kaydedilemedi");
     print();
   };
 
@@ -48,22 +51,24 @@ export default function OrderDetails({ order }) {
       <div ref={contentRef}>
         <InfoCard title="Sipariş Detayı" description={order.id} fields={fields}>
           <p className="mt-6 mb-2 font-bold">Zaman Çizelgesi</p>
-          <div className="flex flex-row gap-4">
-            {order.timeline.map((step) => (
-              <div key={step.key} className="flex items-center gap-2">
+          <ol className="flex flex-wrap gap-x-6 gap-y-3">
+            {order.timeline.map((step, index) => (
+              <li key={step.key} className="flex items-center gap-2">
                 <span
                   className={cn(
-                    "h-3 w-3 rounded-full",
-                    STATUS[step.key]?.className ?? "bg-gray-300"
+                    "h-2.5 w-2.5 rounded-full",
+                    index === order.timeline.length - 1
+                      ? STATUS[step.key]?.dot ?? "bg-[#102E46]"
+                      : "bg-[#102E46]"
                   )}
                 />
                 <div className="flex flex-col text-xs">
                   <span className="font-medium">{step.label}</span>
-                  <span className="text-gray-400">{formatStepDate(step.date)}</span>
+                  <span className="text-gray-500">{formatStepDate(step.date)}</span>
                 </div>
-              </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </InfoCard>
 
         <Card className="mt-4">
@@ -100,7 +105,7 @@ export default function OrderDetails({ order }) {
         onPrint={handlePrint}
         onDownload={() => downloadOrderPDF(order)}
       >
-        <OrderEditSheet order={order} />
+        <OrderEditSheet order={order} onSave={setOrder} />
       </DetailActions>
     </DetailPage>
   );

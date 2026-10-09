@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { CalendarDays, Star, UserCheck, Users } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
 import StatGrid from "@/components/common/StatGrid";
 import StatusBadge from "@/components/common/StatusBadge";
@@ -80,11 +81,11 @@ export default function LeaveTable({ editable = false }) {
   const leaves = toLeaveRows(employees);
 
   const stats = [
-    { title: "Toplam Personel", value: employees.length },
-    { title: "Aktif Personel", value: employees.filter((e) => e.status === "active").length },
-    { title: "İzinde Olanlar", value: employees.filter(isOnLeaveToday).length },
+    { title: "Toplam Personel", icon: Users, value: employees.length },
+    { title: "Aktif Personel", icon: UserCheck, value: employees.filter((e) => e.status === "active").length },
+    { title: "İzinde Olanlar", icon: CalendarDays, value: employees.filter(isOnLeaveToday).length },
     {
-      title: "Ortalama Performans",
+      title: "Ortalama Performans", icon: Star,
       value: averageBy(employees, (e) => e.performanceScore).toFixed(1),
     },
   ];

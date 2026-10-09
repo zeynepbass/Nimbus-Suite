@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { CheckCircle2, Clock, FileText, Wallet } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
 import PageContainer from "@/components/common/PageContainer";
 import StatGrid from "@/components/common/StatGrid";
@@ -27,10 +28,10 @@ export default function InvoiceTable() {
   });
 
   const stats = [
-    { title: "Toplam Fatura", value: invoices.length },
-    { title: "Toplam Ciro", value: formatCurrency(sumBy(invoices, (invoice) => invoice.totalPrice)) },
-    { title: "Tamamlanan", value: countByLastStep(invoices, "completed") },
-    { title: "Bekleyen", value: countByLastStep(invoices, "pending") },
+    { title: "Toplam Fatura", icon: FileText, value: invoices.length },
+    { title: "Toplam Ciro", icon: Wallet, value: formatCurrency(sumBy(invoices, (invoice) => invoice.totalPrice)) },
+    { title: "Tamamlanan", icon: CheckCircle2, value: countByLastStep(invoices, "completed") },
+    { title: "Bekleyen", icon: Clock, value: countByLastStep(invoices, "pending") },
   ];
 
   const handleRemove = (id) => {

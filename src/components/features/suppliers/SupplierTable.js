@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { CheckCircle2, PauseCircle, Star, Truck } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
 import PageContainer from "@/components/common/PageContainer";
 import StatGrid from "@/components/common/StatGrid";
@@ -50,17 +51,19 @@ const staticColumns = [
 
 export default function SupplierTable() {
   const router = useRouter();
-  const { items: suppliers, add, update, remove } = useList(suppliersData);
+  const { items: suppliers, add, update, remove } = useList(suppliersData, {
+    removeMessage: "Tedarikçi silindi",
+  });
   const [selected, setSelected] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const activeCount = suppliers.filter((s) => s.status === "active").length;
 
   const stats = [
-    { title: "Toplam Tedarikçi", value: suppliers.length },
-    { title: "Aktif", value: activeCount },
-    { title: "Pasif", value: suppliers.length - activeCount },
-    { title: "Ortalama Puan", value: averageBy(suppliers, (s) => s.rating).toFixed(1) },
+    { title: "Toplam Tedarikçi", icon: Truck, value: suppliers.length },
+    { title: "Aktif", icon: CheckCircle2, value: activeCount },
+    { title: "Pasif", icon: PauseCircle, value: suppliers.length - activeCount },
+    { title: "Ortalama Puan", icon: Star, value: averageBy(suppliers, (s) => s.rating).toFixed(1) },
   ];
 
   const handleCreate = (values) => {

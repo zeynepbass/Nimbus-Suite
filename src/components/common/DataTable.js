@@ -81,7 +81,7 @@ export default function DataTable({
     <div className="w-full">
       {title && (
         <div className="flex flex-col gap-2 py-3 lg:flex-row lg:items-center lg:justify-between">
-          <h2 className="font-semibold">{title}</h2>
+          <h2 className="text-lg font-semibold text-[#102E46]">{title}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <Input
               aria-label={searchPlaceholder}
@@ -127,15 +127,15 @@ export default function DataTable({
         </div>
       )}
 
-      <div className="rounded-md border">
+      <div className="overflow-hidden rounded-lg border bg-white">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((group) => (
-              <TableRow key={group.id}>
+              <TableRow key={group.id} className="bg-gray-50 hover:bg-gray-50">
                 {group.headers.map((header) => (
                   <TableHead
                     key={header.id}
-                    className="text-center"
+                    className="text-center text-gray-600"
                     aria-sort={SORT_LABELS[header.column.getIsSorted()]}
                   >
                     {header.isPlaceholder

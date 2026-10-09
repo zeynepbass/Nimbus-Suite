@@ -3,8 +3,6 @@ import { ROLES, ROUTE_ACCESS } from "@/constants/roles";
 import { STORAGE_KEYS } from "@/constants/storage";
 import { readStorage, removeStorage, writeStorage } from "@/lib/storage";
 
-// Rol ve kimlik her zaman kullanıcı kaydından okunur; tarayıcıda saklanan
-// oturum verisi yalnızca profil alanlarını taşır.
 export function resolveUser(stored) {
   if (!stored) return null;
 

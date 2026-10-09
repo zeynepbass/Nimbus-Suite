@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { BarChart3 } from "lucide-react";
 import { SidebarTrigger } from "@/components/ui/sidebar";
 import Breadcrumb from "@/components/layout/Breadcrumb";
@@ -11,11 +11,7 @@ import { getLastLogin } from "@/lib/lastLogin";
 const POWER_BI_URL = "https://app.powerbi.com/";
 
 export default function Header() {
-  const [lastLogin, setLastLogin] = useState(null);
-
-  useEffect(() => {
-    setLastLogin(getLastLogin());
-  }, []);
+  const [lastLogin] = useState(getLastLogin);
 
   return (
     <>

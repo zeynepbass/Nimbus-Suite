@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { CalendarDays, Star, UserCheck, Users } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
 import PageContainer from "@/components/common/PageContainer";
 import StatGrid from "@/components/common/StatGrid";
@@ -68,11 +69,11 @@ export default function EmployeeTable() {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const stats = [
-    { title: "Toplam Personel", value: employees.length },
-    { title: "Aktif Personel", value: employees.filter((e) => e.status === "active").length },
-    { title: "İzinde Olanlar", value: employees.filter(isOnLeaveToday).length },
+    { title: "Toplam Personel", icon: Users, value: employees.length },
+    { title: "Aktif Personel", icon: UserCheck, value: employees.filter((e) => e.status === "active").length },
+    { title: "İzinde Olanlar", icon: CalendarDays, value: employees.filter(isOnLeaveToday).length },
     {
-      title: "Ortalama Performans",
+      title: "Ortalama Performans", icon: Star,
       value: averageBy(employees, (e) => e.performanceScore).toFixed(1),
     },
   ];

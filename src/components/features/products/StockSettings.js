@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Pencil } from "lucide-react";
 import DataTable from "@/components/common/DataTable";
+import InlineNumberInput from "@/components/common/InlineNumberInput";
 import { actionsColumn, copyAction, selectColumn } from "@/components/common/columns";
 import { productColumns as col } from "@/components/features/products/productColumns";
 import { toProductRows } from "@/components/features/products/productExcel";
@@ -11,17 +12,10 @@ import { useRouter } from "next/navigation";
 export default function StockSettings({ products, onStockChange, onDelete }) {
   const router = useRouter();
   const [editingId, setEditingId] = useState(null);
-  const [value, setValue] = useState("");
 
-  const startEditing = (product) => {
-    setEditingId(product.id);
-    setValue(product.stock);
-  };
-
-  const commit = (id) => {
-    onStockChange(id, Number(value));
+  const commit = (id, stock) => {
+    onStockChange(id, stock);
     setEditingId(null);
-    setValue("");
   };
 
   const stockColumn = {
@@ -32,23 +26,23 @@ export default function StockSettings({ products, onStockChange, onDelete }) {
       return (
         <div className="text-center font-semibold">
           {editingId === product.id ? (
-            <input
-              autoFocus
-              type="number"
-              value={value}
-              onChange={(event) => setValue(event.target.value)}
-              onBlur={() => commit(product.id)}
-              className="border px-2 py-1 rounded w-20 text-center"
+            <InlineNumberInput
+              label={`${product.name} stok miktarı`}
+              initialValue={product.stock}
+              onCommit={(stock) => commit(product.id, stock)}
+              onCancel={() => setEditingId(null)}
             />
           ) : (
             <div className="flex items-center gap-2 justify-center">
               <span>{product.stock}</span>
-              <Pencil
-                width="15"
-                height="15"
-                className="cursor-pointer"
-                onClick={() => startEditing(product)}
-              />
+              <button
+                type="button"
+                className="rounded p-1 hover:bg-gray-100"
+                aria-label={`${product.name} stok miktarını düzenle`}
+                onClick={() => setEditingId(product.id)}
+              >
+                <Pencil width="15" height="15" />
+              </button>
             </div>
           )}
         </div>

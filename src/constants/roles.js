@@ -12,6 +12,11 @@ export const ROLE_BADGES = {
   [ROLES.TEST]: { label: ROLES.TEST, className: "bg-red-100 text-red-700" },
 };
 
+export const ASSIGNABLE_ROLES = {
+  [ROLES.ADMIN]: [ROLES.MANAGER, ROLES.USER, ROLES.TEST],
+  [ROLES.MANAGER]: [ROLES.USER, ROLES.TEST],
+};
+
 export const ROUTE_ACCESS = {
   "/role": [ROLES.ADMIN, ROLES.MANAGER],
 };

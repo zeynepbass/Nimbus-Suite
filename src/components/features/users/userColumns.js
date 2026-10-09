@@ -1,14 +1,17 @@
 import { sortableHeader } from "@/components/common/columns";
-import { Avatar, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getInitials } from "@/lib/format";
 
 export const userColumns = {
+  id: (header) => ({ accessorKey: "id", header, filterFn: "includesString" }),
   avatar: {
     accessorKey: "resim",
     header: sortableHeader("Resim"),
     cell: ({ row }) => (
       <div className="flex items-center justify-center gap-3">
         <Avatar className="h-8 w-8">
-          <AvatarImage src={row.original.resim} />
+          <AvatarImage src={row.original.resim} alt={row.original.name} />
+          <AvatarFallback>{getInitials(row.original.name)}</AvatarFallback>
         </Avatar>
       </div>
     ),

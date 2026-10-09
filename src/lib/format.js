@@ -8,7 +8,6 @@ export function formatDate(date) {
 
   const options = { year: "numeric", month: "2-digit", day: "2-digit" };
 
-  // Saat bilgisi olmayan tarihler UTC olarak ayrıştırılır; saat eklenmez.
   if (typeof date === "string" && DATE_ONLY.test(date)) {
     return value.toLocaleDateString("tr-TR", { ...options, timeZone: "UTC" });
   }
